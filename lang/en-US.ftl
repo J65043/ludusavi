@@ -225,7 +225,9 @@ confirm-backup =
         [merge] New save data will be merged into the target folder:
         *[create] The target folder will be created:
     }
-
+confirm-local_confict = 
+    A save conflict was detected was detected for (${game_name}), Your a local file (${local_timestamp}) Size: (${local_size}) is newer or bigger than your backup file (${backup_timestamp}) Size: (${backup_size}) .
+    Yes will restore the backup and No will keep the current save and back it up. 
 confirm-restore =
     Are you sure you want to proceed with the restoration?
     This will overwrite any current files with the backups from here:

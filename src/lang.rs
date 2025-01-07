@@ -31,6 +31,11 @@ const MESSAGE: &str = "message";
 const APP: &str = "app";
 const GAME: &str = "game";
 const VERSION: &str = "version";
+const LOCAL_TIMESTAMP: &str = "local_timestamp";
+const LOCAL_SIZE: &str = "local_size";
+const BACKUP_SIZE: &str = "backup_size";
+const BACKUP_TIMESTAMP: &str = "backup_timestamp";
+
 
 pub const TRANSLATOR: Translator = Translator {};
 pub const ADD_SYMBOL: &str = "+";
@@ -1330,6 +1335,16 @@ impl Translator {
         args.set(LOCAL_PATH, local);
         args.set(CLOUD_PATH, cloud);
         translate_args("confirm-cloud-download", &args)
+    }
+
+    pub fn confirm_local_save_conflict(&self,local_timestamp: String,local_size: String, backup_timestamp:String, backup_size:String,game_name:String) -> String {
+        let mut args = FluentArgs::new();
+        args.set(GAME, game_name);
+        args.set(LOCAL_SIZE,local_size);
+        args.set(LOCAL_TIMESTAMP,local_timestamp);
+        args.set(BACKUP_SIZE,backup_size);
+        args.set(BACKUP_TIMESTAMP,backup_timestamp);
+        translate_args("confirm-local_confict", &args)
     }
 
     pub fn no_cloud_changes(&self) -> String {
