@@ -1,8 +1,9 @@
-use std::sync::{LazyLock, Mutex};
+use std::sync::Mutex;
 
 use fluent::{bundle::FluentBundle, FluentArgs, FluentResource};
 use intl_memoizer::concurrent::IntlLangMemoizer;
 use itertools::Itertools;
+use once_cell::sync::Lazy;
 use regex::Regex;
 use unic_langid::LanguageIdentifier;
 
@@ -118,9 +119,6 @@ pub enum Language {
     /// Ukrainian
     #[serde(rename = "uk-UA")]
     Ukrainian,
-    /// Vietnamese
-    #[serde(rename = "vi-VN")]
-    Vietnamese,
 }
 
 impl Language {
@@ -138,7 +136,6 @@ impl Language {
         Self::PortugueseBrazilian,
         Self::Russian,
         Self::Finnish,
-        Self::Vietnamese,
         Self::Turkish,
         Self::Ukrainian,
         // Self::Arabic,
@@ -172,7 +169,6 @@ impl Language {
             Self::Thai => "th-TH",
             Self::Turkish => "tr-TR",
             Self::Ukrainian => "uk-UA",
-            Self::Vietnamese => "vi-VN",
         };
         id.parse().unwrap()
     }
@@ -200,14 +196,13 @@ impl Language {
             Language::Thai => "ภาษาไทย",
             Language::Turkish => "Türkçe",
             Language::Ukrainian => "Украї́нська мо́ва",
-            Language::Vietnamese => "Tiếng Việt",
         }
     }
 
     fn completion(&self) -> u8 {
         match self {
-            Language::Arabic => 100,
-            Language::ChineseSimplified => 100,
+            Language::Arabic => 94,
+            Language::ChineseSimplified => 94,
             Language::ChineseTraditional => 94,
             Language::Czech => 4,
             Language::Dutch => 94,
@@ -220,14 +215,13 @@ impl Language {
             Language::Italian => 100,
             Language::Japanese => 50,
             Language::Korean => 86,
-            Language::Polish => 99,
-            Language::PortugueseBrazilian => 100,
+            Language::Polish => 90,
+            Language::PortugueseBrazilian => 92,
             Language::Russian => 100,
             Language::Spanish => 94,
             Language::Thai => 22,
             Language::Turkish => 100,
             Language::Ukrainian => 38,
-            Language::Vietnamese => 9,
         }
     }
 }
@@ -246,7 +240,7 @@ pub struct Translator {}
 
 static LANGUAGE: Mutex<Language> = Mutex::new(Language::English);
 
-static BUNDLE: LazyLock<Mutex<FluentBundle<FluentResource, IntlLangMemoizer>>> = LazyLock::new(|| {
+static BUNDLE: Lazy<Mutex<FluentBundle<FluentResource, IntlLangMemoizer>>> = Lazy::new(|| {
     let ftl = include_str!("../lang/en-US.ftl").to_owned();
     let res = FluentResource::try_new(ftl).expect("Failed to parse Fluent file content.");
 
@@ -285,7 +279,6 @@ fn set_language(language: Language) {
         Language::Thai => include_str!("../lang/th-TH.ftl"),
         Language::Turkish => include_str!("../lang/tr-TR.ftl"),
         Language::Ukrainian => include_str!("../lang/uk-UA.ftl"),
-        Language::Vietnamese => include_str!("../lang/vi-VN.ftl"),
     }
     .to_owned();
 
@@ -298,9 +291,9 @@ fn set_language(language: Language) {
     *last_language = language;
 }
 
-static RE_EXTRA_SPACES: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"([^\r\n ]) {2,}").unwrap());
-static RE_EXTRA_LINES: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"([^\r\n ])[\r\n]([^\r\n ])").unwrap());
-static RE_EXTRA_PARAGRAPHS: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"([^\r\n ])[\r\n]{2,}([^\r\n ])").unwrap());
+static RE_EXTRA_SPACES: Lazy<Regex> = Lazy::new(|| Regex::new(r"([^\r\n ]) {2,}").unwrap());
+static RE_EXTRA_LINES: Lazy<Regex> = Lazy::new(|| Regex::new(r"([^\r\n ])[\r\n]([^\r\n ])").unwrap());
+static RE_EXTRA_PARAGRAPHS: Lazy<Regex> = Lazy::new(|| Regex::new(r"([^\r\n ])[\r\n]{2,}([^\r\n ])").unwrap());
 
 fn translate(id: &str) -> String {
     translate_args(id, &FluentArgs::new())
@@ -935,10 +928,6 @@ impl Translator {
 
     pub fn custom_registry_label(&self) -> String {
         translate("field-custom-registry")
-    }
-
-    pub fn custom_installed_name_label(&self) -> String {
-        translate("label-installed-name")
     }
 
     pub fn sort_label(&self) -> String {
