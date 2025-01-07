@@ -30,8 +30,6 @@ pub struct ApiErrors {
     /// Ludusavi tried and failed to automatically synchronize with the cloud.
     #[serde(skip_serializing_if = "Option::is_none")]
     cloud_sync_failed: Option<concern::CloudSyncFailed>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    local_conflict: Option<Vec<String>>,
 }
 
 impl ApiErrors {
@@ -57,9 +55,6 @@ pub mod concern {
 
     #[derive(Debug, Default, serde::Serialize, schemars::JsonSchema)]
     pub struct CloudSyncFailed {}
-
-    #[derive(Debug, Default, serde::Serialize, schemars::JsonSchema)]
-    pub struct LocalConflict{}
 }
 
 #[derive(Debug, Default, serde::Serialize, schemars::JsonSchema)]
@@ -257,17 +252,6 @@ impl Reporter {
         });
     }
 
-    pub fn local_save_conflict(&mut self,name: &String) {
-        self.set_errors(|e| {
-            // Initialize local_conflict if it is None
-            if e.local_conflict.is_none() {
-                e.local_conflict = Some(Vec::new());
-            }
-    
-            // Push the name to the vector inside local_conflict
-            e.local_conflict.as_mut().unwrap().push(name.clone());
-        });
-    }
     pub fn trip_unknown_games(&mut self, games: Vec<String>) {
         self.set_errors(|e| {
             e.unknown_games = Some(games);

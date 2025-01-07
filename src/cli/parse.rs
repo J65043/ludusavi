@@ -256,10 +256,6 @@ pub enum Subcommand {
         /// Alternatively supports stdin (one value per line).
         #[clap()]
         games: Vec<String>,
-
-        #[clap(long)]
-        local_conflict_detect: bool,
-        
     },
     /// Generate shell completion scripts
     Complete {
@@ -828,7 +824,6 @@ mod tests {
                     cloud_sync: false,
                     no_cloud_sync: false,
                     games: vec![],
-                    local_conflict_detect:false,
                 }),
             },
         );
@@ -870,7 +865,6 @@ mod tests {
                     cloud_sync: true,
                     no_cloud_sync: false,
                     games: vec![s("game1"), s("game2")],
-                    local_conflict_detect:true,
                 }),
             },
         );
@@ -910,7 +904,6 @@ mod tests {
                         cloud_sync: false,
                         no_cloud_sync: false,
                         games: vec![],
-                        local_conflict_detect:false,
                     }),
                 },
             );
